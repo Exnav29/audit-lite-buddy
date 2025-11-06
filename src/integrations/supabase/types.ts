@@ -14,7 +14,218 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      areas: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          project_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          project_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "areas_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "audit_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_projects: {
+        Row: {
+          audit_date: string
+          auditor_names: string[]
+          building_type: string
+          client_name: string
+          contact_person: string
+          created_at: string
+          id: string
+          site_address: string
+          status: string
+          tariff_ghs_per_kwh: number
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          audit_date?: string
+          auditor_names: string[]
+          building_type: string
+          client_name: string
+          contact_person: string
+          created_at?: string
+          id?: string
+          site_address: string
+          status?: string
+          tariff_ghs_per_kwh?: number
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          audit_date?: string
+          auditor_names?: string[]
+          building_type?: string
+          client_name?: string
+          contact_person?: string
+          created_at?: string
+          id?: string
+          site_address?: string
+          status?: string
+          tariff_ghs_per_kwh?: number
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      equipment: {
+        Row: {
+          area_id: string
+          category: string
+          condition: string
+          created_at: string
+          days_per_week: number
+          description: string
+          hours_per_day: number
+          id: string
+          kwh_per_day: number | null
+          kwh_per_month: number | null
+          notes: string | null
+          quantity: number
+          wattage_w: number
+        }
+        Insert: {
+          area_id: string
+          category: string
+          condition?: string
+          created_at?: string
+          days_per_week: number
+          description: string
+          hours_per_day: number
+          id?: string
+          kwh_per_day?: number | null
+          kwh_per_month?: number | null
+          notes?: string | null
+          quantity?: number
+          wattage_w: number
+        }
+        Update: {
+          area_id?: string
+          category?: string
+          condition?: string
+          created_at?: string
+          days_per_week?: number
+          description?: string
+          hours_per_day?: number
+          id?: string
+          kwh_per_day?: number | null
+          kwh_per_month?: number | null
+          notes?: string | null
+          quantity?: number
+          wattage_w?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "equipment_area_id_fkey"
+            columns: ["area_id"]
+            isOneToOne: false
+            referencedRelation: "areas"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      observations: {
+        Row: {
+          comfort_levels: string | null
+          created_at: string
+          id: string
+          lighting_adequacy: string | null
+          maintenance_issues: string | null
+          project_id: string
+          safety_concerns: string | null
+          signs_of_waste: string | null
+          ventilation_condition: string | null
+        }
+        Insert: {
+          comfort_levels?: string | null
+          created_at?: string
+          id?: string
+          lighting_adequacy?: string | null
+          maintenance_issues?: string | null
+          project_id: string
+          safety_concerns?: string | null
+          signs_of_waste?: string | null
+          ventilation_condition?: string | null
+        }
+        Update: {
+          comfort_levels?: string | null
+          created_at?: string
+          id?: string
+          lighting_adequacy?: string | null
+          maintenance_issues?: string | null
+          project_id?: string
+          safety_concerns?: string | null
+          signs_of_waste?: string | null
+          ventilation_condition?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "observations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "audit_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      recommendations: {
+        Row: {
+          created_at: string
+          description: string
+          estimated_savings_ghs_month: number | null
+          estimated_savings_kwh_month: number | null
+          explanation: string | null
+          id: string
+          project_id: string
+        }
+        Insert: {
+          created_at?: string
+          description: string
+          estimated_savings_ghs_month?: number | null
+          estimated_savings_kwh_month?: number | null
+          explanation?: string | null
+          id?: string
+          project_id: string
+        }
+        Update: {
+          created_at?: string
+          description?: string
+          estimated_savings_ghs_month?: number | null
+          estimated_savings_kwh_month?: number | null
+          explanation?: string | null
+          id?: string
+          project_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "recommendations_project_id_fkey"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "audit_projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
