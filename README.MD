@@ -66,7 +66,7 @@ npm install
 npm run dev
 
 Make sure you set up your Supabase environment variables in `.env.local`.
-
+```
 ### 📤 Deployment  
 This project can be deployed directly from Lovable:  
 - Open the project in Lovable  
