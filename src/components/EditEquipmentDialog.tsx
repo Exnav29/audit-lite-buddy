@@ -110,14 +110,22 @@ const EditEquipmentDialog = ({ open, onOpenChange, equipment, onSuccess }: EditE
       let photoUrl = equipment.photo_url;
 
       if (photo) {
+        // Delete old photo if it exists
+        if (equipment.photo_url) {
+          const oldFileName = equipment.photo_url.split('/').pop();
+          if (oldFileName) {
+            await supabase.storage
+              .from('equipment-photos')
+              .remove([oldFileName]);
+          }
+        }
+
         const fileExt = photo.name.split('.').pop();
         const fileName = `${equipment.id}-${Date.now()}.${fileExt}`;
         
         const { error: uploadError } = await supabase.storage
           .from('equipment-photos')
-          .upload(fileName, photo, {
-            upsert: true
-          });
+          .upload(fileName, photo);
 
         if (uploadError) throw uploadError;
         
