@@ -4,12 +4,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Plus, BarChart3, FileText, ClipboardList, FileBarChart } from "lucide-react";
+import { ArrowLeft, Plus, BarChart3, FileText, ClipboardList, FileBarChart, Images } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import EquipmentList from "@/components/EquipmentList";
 import ObservationsForm from "@/components/ObservationsForm";
 import ProjectSummary from "@/components/ProjectSummary";
 import RecommendationsList from "@/components/RecommendationsList";
+import PhotoGallery from "@/components/PhotoGallery";
 
 interface AuditProject {
   id: string;
@@ -109,11 +110,16 @@ const ProjectDetail = () => {
         </div>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-1">
+          <TabsList className="grid w-full grid-cols-3 sm:grid-cols-5 gap-1">
             <TabsTrigger value="equipment" className="gap-1 sm:gap-2 text-xs sm:text-sm">
               <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
               <span className="hidden sm:inline">Equipment</span>
               <span className="sm:hidden">Equip.</span>
+            </TabsTrigger>
+            <TabsTrigger value="photos" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Images className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Photos</span>
+              <span className="sm:hidden">Photos</span>
             </TabsTrigger>
             <TabsTrigger value="observations" className="gap-1 sm:gap-2 text-xs sm:text-sm">
               <ClipboardList className="w-3 h-3 sm:w-4 sm:h-4" />
@@ -133,6 +139,10 @@ const ProjectDetail = () => {
 
           <TabsContent value="equipment">
             <EquipmentList projectId={id!} tariff={project.tariff_ghs_per_kwh} />
+          </TabsContent>
+
+          <TabsContent value="photos">
+            <PhotoGallery projectId={id!} />
           </TabsContent>
 
           <TabsContent value="observations">
