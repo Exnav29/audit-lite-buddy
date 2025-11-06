@@ -107,6 +107,17 @@ const EditEquipmentDialog = ({ open, onOpenChange, equipment, onSuccess }: EditE
     setLoading(true);
 
     try {
+      // Validate numeric inputs to avoid NaN/invalid numeric errors
+      const quantity = Number(formData.quantity);
+      const wattage_w = Number(formData.wattage_w);
+      const hours_per_day = Number(formData.hours_per_day);
+      const days_per_week = Number(formData.days_per_week);
+
+      if (!Number.isFinite(quantity) || quantity < 1) throw new Error('Quantity must be a number ≥ 1');
+      if (!Number.isFinite(wattage_w) || wattage_w < 0) throw new Error('Wattage must be a number ≥ 0');
+      if (!Number.isFinite(hours_per_day) || hours_per_day < 0 || hours_per_day > 24) throw new Error('Hours per day must be between 0 and 24');
+      if (!Number.isFinite(days_per_week) || days_per_week < 1 || days_per_week > 7) throw new Error('Days per week must be between 1 and 7');
+
       let photoUrl = equipment.photo_url;
 
       if (photo) {
@@ -114,9 +125,7 @@ const EditEquipmentDialog = ({ open, onOpenChange, equipment, onSuccess }: EditE
         if (equipment.photo_url) {
           const oldPath = equipment.photo_url.split('/equipment-photos/')[1];
           if (oldPath) {
-            await supabase.storage
-              .from('equipment-photos')
-              .remove([oldPath]);
+            await supabase.storage.from('equipment-photos').remove([oldPath]);
           }
         }
 
@@ -126,28 +135,31 @@ const EditEquipmentDialog = ({ open, onOpenChange, equipment, onSuccess }: EditE
         const fileExt = photo.name.split('.').pop();
         const fileName = `${equipment.id}-${Date.now()}.${fileExt}`;
         const filePath = `${user.id}/${fileName}`;
-        
+
         const { error: uploadError } = await supabase.storage
           .from('equipment-photos')
           .upload(filePath, photo, { upsert: true });
-
         if (uploadError) throw uploadError;
-        
+
         const { data: { publicUrl } } = supabase.storage
           .from('equipment-photos')
           .getPublicUrl(filePath);
-        
         photoUrl = publicUrl;
       }
 
-      const { error } = await supabase
-        .from("equipment")
-        .update({
-          ...formData,
-          photo_url: photoUrl,
-        })
-        .eq("id", equipment.id);
+      const updateData = {
+        category: formData.category,
+        description: formData.description,
+        quantity,
+        wattage_w,
+        hours_per_day,
+        days_per_week,
+        condition: formData.condition,
+        notes: formData.notes || null,
+        photo_url: photoUrl || null,
+      } as const;
 
+      const { error } = await supabase.from('equipment').update(updateData).eq('id', equipment.id);
       if (error) throw error;
 
       toast({
@@ -157,11 +169,12 @@ const EditEquipmentDialog = ({ open, onOpenChange, equipment, onSuccess }: EditE
 
       onSuccess();
     } catch (error) {
-      console.error("Error updating equipment:", error);
+      console.error('Error updating equipment:', error);
+      const message = error instanceof Error ? error.message : 'Failed to update equipment';
       toast({
-        title: "Error",
-        description: "Failed to update equipment",
-        variant: "destructive",
+        title: 'Update failed',
+        description: message,
+        variant: 'destructive',
       });
     } finally {
       setLoading(false);

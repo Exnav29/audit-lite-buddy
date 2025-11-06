@@ -103,40 +103,42 @@ export const EquipmentDataTable = ({ projectId, tariff }: EquipmentDataTableProp
 
   const saveEdit = async () => {
     if (!editingId) return;
-
     try {
-      // Save edited fields
+      const quantity = Number(editValues.quantity);
+      const wattage_w = Number(editValues.wattage_w);
+      const hours_per_day = Number(editValues.hours_per_day);
+      const days_per_week = Number(editValues.days_per_week);
+
+      if (!Number.isFinite(quantity) || quantity < 1) throw new Error('Quantity must be a number ≥ 1');
+      if (!Number.isFinite(wattage_w) || wattage_w < 0) throw new Error('Wattage must be a number ≥ 0');
+      if (!Number.isFinite(hours_per_day) || hours_per_day < 0 || hours_per_day > 24) throw new Error('Hours per day must be between 0 and 24');
+      if (!Number.isFinite(days_per_week) || days_per_week < 1 || days_per_week > 7) throw new Error('Days per week must be between 1 and 7');
+
       const { error } = await supabase
-        .from("equipment")
+        .from('equipment')
         .update({
           category: editValues.category,
           description: editValues.description,
-          quantity: editValues.quantity,
-          wattage_w: editValues.wattage_w,
-          hours_per_day: editValues.hours_per_day,
-          days_per_week: editValues.days_per_week,
+          quantity,
+          wattage_w,
+          hours_per_day,
+          days_per_week,
           condition: editValues.condition,
-          notes: editValues.notes,
+          notes: editValues.notes || null,
         })
-        .eq("id", editingId);
+        .eq('id', editingId);
 
       if (error) throw error;
 
-      toast({
-        title: "Success",
-        description: "Equipment updated successfully",
-      });
+      toast({ title: 'Success', description: 'Equipment updated successfully' });
 
       setEditingId(null);
       setEditValues({});
       fetchEquipment();
     } catch (error) {
-      console.error("Error updating equipment:", error);
-      toast({
-        title: "Error",
-        description: "Failed to update equipment",
-        variant: "destructive",
-      });
+      console.error('Error updating equipment:', error);
+      const message = error instanceof Error ? error.message : 'Failed to update equipment';
+      toast({ title: 'Update failed', description: message, variant: 'destructive' });
     }
   };
 
