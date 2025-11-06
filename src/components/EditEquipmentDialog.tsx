@@ -112,26 +112,30 @@ const EditEquipmentDialog = ({ open, onOpenChange, equipment, onSuccess }: EditE
       if (photo) {
         // Delete old photo if it exists
         if (equipment.photo_url) {
-          const oldFileName = equipment.photo_url.split('/').pop();
-          if (oldFileName) {
+          const oldPath = equipment.photo_url.split('/equipment-photos/')[1];
+          if (oldPath) {
             await supabase.storage
               .from('equipment-photos')
-              .remove([oldFileName]);
+              .remove([oldPath]);
           }
         }
 
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) throw userError || new Error('Not authenticated');
+
         const fileExt = photo.name.split('.').pop();
         const fileName = `${equipment.id}-${Date.now()}.${fileExt}`;
+        const filePath = `${user.id}/${fileName}`;
         
         const { error: uploadError } = await supabase.storage
           .from('equipment-photos')
-          .upload(fileName, photo);
+          .upload(filePath, photo, { upsert: true });
 
         if (uploadError) throw uploadError;
         
         const { data: { publicUrl } } = supabase.storage
           .from('equipment-photos')
-          .getPublicUrl(fileName);
+          .getPublicUrl(filePath);
         
         photoUrl = publicUrl;
       }

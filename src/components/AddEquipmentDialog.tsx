@@ -65,11 +65,15 @@ const AddEquipmentDialog = ({ open, onOpenChange, areaId, onSuccess }: AddEquipm
       let photoUrl = null;
 
       if (photo) {
+        const { data: { user }, error: userError } = await supabase.auth.getUser();
+        if (userError || !user) throw userError || new Error('Not authenticated');
+
         const fileExt = photo.name.split('.').pop();
         const fileName = `${areaId}-${Date.now()}.${fileExt}`;
+        const filePath = `${user.id}/${fileName}`;
         const { error: uploadError } = await supabase.storage
           .from('equipment-photos')
-          .upload(fileName, photo, {
+          .upload(filePath, photo, {
             upsert: true
           });
 
@@ -77,7 +81,7 @@ const AddEquipmentDialog = ({ open, onOpenChange, areaId, onSuccess }: AddEquipm
         
         const { data: { publicUrl } } = supabase.storage
           .from('equipment-photos')
-          .getPublicUrl(fileName);
+          .getPublicUrl(filePath);
         
         photoUrl = publicUrl;
       }
