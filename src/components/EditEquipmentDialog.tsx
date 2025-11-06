@@ -112,9 +112,12 @@ const EditEquipmentDialog = ({ open, onOpenChange, equipment, onSuccess }: EditE
       if (photo) {
         const fileExt = photo.name.split('.').pop();
         const fileName = `${equipment.id}-${Date.now()}.${fileExt}`;
+        
         const { error: uploadError } = await supabase.storage
           .from('equipment-photos')
-          .upload(fileName, photo);
+          .upload(fileName, photo, {
+            upsert: true
+          });
 
         if (uploadError) throw uploadError;
         

@@ -69,7 +69,9 @@ const AddEquipmentDialog = ({ open, onOpenChange, areaId, onSuccess }: AddEquipm
         const fileName = `${areaId}-${Date.now()}.${fileExt}`;
         const { error: uploadError } = await supabase.storage
           .from('equipment-photos')
-          .upload(fileName, photo);
+          .upload(fileName, photo, {
+            upsert: true
+          });
 
         if (uploadError) throw uploadError;
         

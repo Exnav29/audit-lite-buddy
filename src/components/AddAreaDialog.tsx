@@ -45,7 +45,9 @@ const AddAreaDialog = ({ open, onOpenChange, projectId, onSuccess }: AddAreaDial
         const fileName = `${projectId}-${Date.now()}.${fileExt}`;
         const { error: uploadError } = await supabase.storage
           .from('area-photos')
-          .upload(fileName, photo);
+          .upload(fileName, photo, {
+            upsert: true
+          });
 
         if (uploadError) throw uploadError;
         
