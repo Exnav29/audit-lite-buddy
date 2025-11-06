@@ -105,15 +105,7 @@ export const EquipmentDataTable = ({ projectId, tariff }: EquipmentDataTableProp
     if (!editingId) return;
 
     try {
-      // Calculate kWh values
-      const quantity = editValues.quantity || 0;
-      const wattage = editValues.wattage_w || 0;
-      const hours = editValues.hours_per_day || 0;
-      const days = editValues.days_per_week || 0;
-
-      const kwhPerDay = (quantity * wattage * hours) / 1000;
-      const kwhPerMonth = (kwhPerDay * days * 52) / 12;
-
+      // Save edited fields
       const { error } = await supabase
         .from("equipment")
         .update({
@@ -123,8 +115,6 @@ export const EquipmentDataTable = ({ projectId, tariff }: EquipmentDataTableProp
           wattage_w: editValues.wattage_w,
           hours_per_day: editValues.hours_per_day,
           days_per_week: editValues.days_per_week,
-          kwh_per_day: kwhPerDay,
-          kwh_per_month: kwhPerMonth,
           condition: editValues.condition,
           notes: editValues.notes,
         })

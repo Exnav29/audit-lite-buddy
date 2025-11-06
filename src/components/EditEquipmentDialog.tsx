@@ -140,16 +140,11 @@ const EditEquipmentDialog = ({ open, onOpenChange, equipment, onSuccess }: EditE
         photoUrl = publicUrl;
       }
 
-      const kwhPerDay = (formData.quantity * formData.wattage_w * formData.hours_per_day) / 1000;
-      const kwhPerMonth = kwhPerDay * 30;
-
       const { error } = await supabase
         .from("equipment")
         .update({
           ...formData,
           photo_url: photoUrl,
-          kwh_per_day: kwhPerDay,
-          kwh_per_month: kwhPerMonth,
         })
         .eq("id", equipment.id);
 
