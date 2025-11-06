@@ -81,48 +81,53 @@ const ProjectDetail = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
-          <Button variant="ghost" onClick={() => navigate("/")} className="gap-2">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex justify-between items-center gap-2">
+          <Button variant="ghost" onClick={() => navigate("/")} className="gap-2" size="sm">
             <ArrowLeft className="w-4 h-4" />
-            Back to Dashboard
+            <span className="hidden sm:inline">Back to Dashboard</span>
+            <span className="sm:hidden">Back</span>
           </Button>
-          <Button onClick={() => navigate(`/report/${id}`)} className="gap-2">
+          <Button onClick={() => navigate(`/report/${id}`)} className="gap-2" size="sm">
             <FileBarChart className="w-4 h-4" />
-            View Report
+            <span className="hidden sm:inline">View Report</span>
+            <span className="sm:hidden">Report</span>
           </Button>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="mb-8">
-          <h1 className="text-3xl font-bold mb-2">{project.client_name}</h1>
-          <p className="text-muted-foreground">{project.site_address}</p>
-          <div className="flex gap-4 mt-4 text-sm text-muted-foreground">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold mb-2">{project.client_name}</h1>
+          <p className="text-sm sm:text-base text-muted-foreground">{project.site_address}</p>
+          <div className="flex flex-col sm:flex-row sm:gap-4 mt-3 sm:mt-4 text-sm text-muted-foreground space-y-1 sm:space-y-0">
             <span>Building: {project.building_type}</span>
-            <span>•</span>
+            <span className="hidden sm:inline">•</span>
             <span>Date: {new Date(project.audit_date).toLocaleDateString()}</span>
-            <span>•</span>
+            <span className="hidden sm:inline">•</span>
             <span>Tariff: GHS {project.tariff_ghs_per_kwh}/kWh</span>
           </div>
         </div>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="equipment" className="gap-2">
-              <Plus className="w-4 h-4" />
-              Equipment
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-4 sm:space-y-6">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 gap-1">
+            <TabsTrigger value="equipment" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+              <Plus className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Equipment</span>
+              <span className="sm:hidden">Equip.</span>
             </TabsTrigger>
-            <TabsTrigger value="observations" className="gap-2">
-              <ClipboardList className="w-4 h-4" />
-              Observations
+            <TabsTrigger value="observations" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+              <ClipboardList className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Observations</span>
+              <span className="sm:hidden">Obs.</span>
             </TabsTrigger>
-            <TabsTrigger value="summary" className="gap-2">
-              <BarChart3 className="w-4 h-4" />
+            <TabsTrigger value="summary" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+              <BarChart3 className="w-3 h-3 sm:w-4 sm:h-4" />
               Summary
             </TabsTrigger>
-            <TabsTrigger value="recommendations" className="gap-2">
-              <FileText className="w-4 h-4" />
-              Recommendations
+            <TabsTrigger value="recommendations" className="gap-1 sm:gap-2 text-xs sm:text-sm">
+              <FileText className="w-3 h-3 sm:w-4 sm:h-4" />
+              <span className="hidden sm:inline">Recommendations</span>
+              <span className="sm:hidden">Rec.</span>
             </TabsTrigger>
           </TabsList>
 

@@ -67,30 +67,30 @@ const Dashboard = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="flex items-center justify-center w-10 h-10 bg-primary rounded-xl">
-              <Zap className="w-6 h-6 text-primary-foreground" />
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4 flex items-center justify-between gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+            <div className="flex items-center justify-center w-8 h-8 sm:w-10 sm:h-10 bg-primary rounded-xl flex-shrink-0">
+              <Zap className="w-4 h-4 sm:w-6 sm:h-6 text-primary-foreground" />
             </div>
-            <div>
-              <h1 className="text-xl font-bold">Energy Audit Pro</h1>
-              <p className="text-xs text-muted-foreground">Field Auditing</p>
+            <div className="min-w-0">
+              <h1 className="text-base sm:text-xl font-bold truncate">Energy Audit Pro</h1>
+              <p className="text-xs text-muted-foreground hidden sm:block">Field Auditing</p>
             </div>
           </div>
-          <Button variant="outline" size="sm" onClick={handleLogout}>
-            <LogOut className="w-4 h-4 mr-2" />
-            Logout
+          <Button variant="outline" size="sm" onClick={handleLogout} className="flex-shrink-0">
+            <LogOut className="w-4 h-4 sm:mr-2" />
+            <span className="hidden sm:inline">Logout</span>
           </Button>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8">
-        <div className="flex items-center justify-between mb-8">
-          <div>
-            <h2 className="text-3xl font-bold mb-2">Audit Projects</h2>
-            <p className="text-muted-foreground">Manage your energy audit projects</p>
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 mb-6 sm:mb-8">
+          <div className="min-w-0 flex-1">
+            <h2 className="text-2xl sm:text-3xl font-bold mb-1 sm:mb-2">Audit Projects</h2>
+            <p className="text-sm sm:text-base text-muted-foreground">Manage your energy audit projects</p>
           </div>
-          <Button onClick={() => navigate("/project/new")} size="lg">
+          <Button onClick={() => navigate("/project/new")} size="lg" className="w-full sm:w-auto">
             <Plus className="w-5 h-5 mr-2" />
             New Audit
           </Button>

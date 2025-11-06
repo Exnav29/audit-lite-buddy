@@ -80,28 +80,28 @@ const Report = () => {
   }
 
   return (
-    <div className="min-h-screen bg-background p-8">
+    <div className="min-h-screen bg-background p-3 sm:p-6 lg:p-8">
       <div className="max-w-7xl mx-auto">
-        <div className="mb-6 flex items-center justify-between">
-          <Button variant="outline" onClick={() => navigate(`/project/${id}`)}>
+        <div className="mb-4 sm:mb-6 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          <Button variant="outline" onClick={() => navigate(`/project/${id}`)} className="w-full sm:w-auto">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Back to Project
           </Button>
-          <Button onClick={handleExport}>
+          <Button onClick={handleExport} className="w-full sm:w-auto">
             <Download className="mr-2 h-4 w-4" />
             Export Report
           </Button>
         </div>
 
-        <Card className="mb-6">
+        <Card className="mb-4 sm:mb-6">
           <CardHeader>
-            <CardTitle>Energy Audit Report</CardTitle>
-            <CardDescription>
+            <CardTitle className="text-xl sm:text-2xl">Energy Audit Report</CardTitle>
+            <CardDescription className="text-sm">
               {project.client_name} - {project.site_address}
             </CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-2 gap-4 text-sm">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4 text-sm">
               <div>
                 <span className="font-semibold">Audit Date:</span>{" "}
                 {new Date(project.audit_date).toLocaleDateString()}

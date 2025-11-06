@@ -83,15 +83,15 @@ const NewProject = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
-          <Button variant="ghost" onClick={() => navigate("/")} className="gap-2">
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
+          <Button variant="ghost" onClick={() => navigate("/")} className="gap-2" size="sm">
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
           </Button>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 max-w-2xl">
+      <main className="container mx-auto px-3 sm:px-4 py-4 sm:py-8 max-w-2xl">
         <Card>
           <CardHeader>
             <CardTitle>New Energy Audit</CardTitle>
@@ -137,7 +137,7 @@ const NewProject = () => {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="audit_date">Audit Date</Label>
                   <Input
@@ -200,8 +200,8 @@ const NewProject = () => {
                 />
               </div>
 
-              <div className="flex gap-3">
-                <Button type="submit" disabled={loading} className="flex-1">
+              <div className="flex flex-col sm:flex-row gap-3">
+                <Button type="submit" disabled={loading} className="flex-1 w-full">
                   <Save className="w-4 h-4 mr-2" />
                   {loading ? "Creating..." : "Create Audit"}
                 </Button>
@@ -209,6 +209,7 @@ const NewProject = () => {
                   type="button"
                   variant="outline"
                   onClick={() => navigate("/")}
+                  className="w-full sm:w-auto"
                 >
                   Cancel
                 </Button>
