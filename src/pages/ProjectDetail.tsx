@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ArrowLeft, Plus, BarChart3, FileText, ClipboardList } from "lucide-react";
+import { ArrowLeft, Plus, BarChart3, FileText, ClipboardList, FileBarChart } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import EquipmentList from "@/components/EquipmentList";
 import ObservationsForm from "@/components/ObservationsForm";
@@ -81,10 +81,14 @@ const ProjectDetail = () => {
   return (
     <div className="min-h-screen bg-background">
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">
-        <div className="container mx-auto px-4 py-4">
+        <div className="container mx-auto px-4 py-4 flex justify-between items-center">
           <Button variant="ghost" onClick={() => navigate("/")} className="gap-2">
             <ArrowLeft className="w-4 h-4" />
             Back to Dashboard
+          </Button>
+          <Button onClick={() => navigate(`/report/${id}`)} className="gap-2">
+            <FileBarChart className="w-4 h-4" />
+            View Report
           </Button>
         </div>
       </header>
