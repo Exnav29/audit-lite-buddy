@@ -8,6 +8,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { EquipmentDataTable } from "@/components/EquipmentDataTable";
 import { ReportCharts } from "@/components/ReportCharts";
 import { useToast } from "@/hooks/use-toast";
+import { exportAuditReportToCSV } from "@/lib/csvExport";
 
 interface AuditProject {
   id: string;
@@ -52,12 +53,27 @@ const Report = () => {
     }
   };
 
-  const handleExport = () => {
-    toast({
-      title: "Export Started",
-      description: "Preparing your report for download...",
-    });
-    // Export functionality will be implemented in the table component
+  const handleExport = async () => {
+    try {
+      toast({
+        title: "Exporting...",
+        description: "Preparing your audit report for download...",
+      });
+
+      await exportAuditReportToCSV(id!);
+
+      toast({
+        title: "Export Successful",
+        description: "Your audit report has been downloaded as a CSV file.",
+      });
+    } catch (error) {
+      console.error("Error exporting report:", error);
+      toast({
+        title: "Export Failed",
+        description: "Failed to export the audit report. Please try again.",
+        variant: "destructive",
+      });
+    }
   };
 
   if (loading) {
