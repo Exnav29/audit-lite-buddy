@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
+import { Camera } from "lucide-react";
 
 interface AddAreaDialogProps {
   open: boolean;
@@ -17,17 +18,50 @@ const AddAreaDialog = ({ open, onOpenChange, projectId, onSuccess }: AddAreaDial
   const { toast } = useToast();
   const [areaName, setAreaName] = useState("");
   const [loading, setLoading] = useState(false);
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
+
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPhoto(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      let photoUrl = null;
+
+      if (photo) {
+        const fileExt = photo.name.split('.').pop();
+        const fileName = `${projectId}-${Date.now()}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('area-photos')
+          .upload(fileName, photo);
+
+        if (uploadError) throw uploadError;
+        
+        const { data: { publicUrl } } = supabase.storage
+          .from('area-photos')
+          .getPublicUrl(fileName);
+        
+        photoUrl = publicUrl;
+      }
+
       const { error } = await supabase
         .from("areas")
         .insert({
           project_id: projectId,
           name: areaName,
+          photo_url: photoUrl,
         });
 
       if (error) throw error;
@@ -38,6 +72,8 @@ const AddAreaDialog = ({ open, onOpenChange, projectId, onSuccess }: AddAreaDial
       });
 
       setAreaName("");
+      setPhoto(null);
+      setPhotoPreview(null);
       onSuccess();
     } catch (error) {
       console.error("Error adding area:", error);
@@ -61,15 +97,47 @@ const AddAreaDialog = ({ open, onOpenChange, projectId, onSuccess }: AddAreaDial
               Create a new room or area to audit
             </DialogDescription>
           </DialogHeader>
-          <div className="py-4">
-            <Label htmlFor="area_name">Area Name</Label>
-            <Input
-              id="area_name"
-              placeholder="e.g., Main Office, Server Room"
-              value={areaName}
-              onChange={(e) => setAreaName(e.target.value)}
-              required
-            />
+          <div className="py-4 space-y-4">
+            <div>
+              <Label htmlFor="area_name">Area Name</Label>
+              <Input
+                id="area_name"
+                placeholder="e.g., Main Office, Server Room"
+                value={areaName}
+                onChange={(e) => setAreaName(e.target.value)}
+                required
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="area-photo">Area Photo (Optional)</Label>
+              <div className="flex gap-2 mt-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => document.getElementById('area-photo')?.click()}
+                  className="flex-1"
+                >
+                  <Camera className="w-4 h-4 mr-2" />
+                  {photo ? 'Change Photo' : 'Take Photo'}
+                </Button>
+                <Input
+                  id="area-photo"
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handlePhotoChange}
+                  className="hidden"
+                />
+              </div>
+              {photoPreview && (
+                <img 
+                  src={photoPreview} 
+                  alt="Preview" 
+                  className="mt-2 w-full h-48 object-cover rounded-md border"
+                />
+              )}
+            </div>
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>

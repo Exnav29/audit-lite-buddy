@@ -19,18 +19,21 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          photo_url: string | null
           project_id: string
         }
         Insert: {
           created_at?: string
           id?: string
           name: string
+          photo_url?: string | null
           project_id: string
         }
         Update: {
           created_at?: string
           id?: string
           name?: string
+          photo_url?: string | null
           project_id?: string
         }
         Relationships: [
@@ -101,6 +104,7 @@ export type Database = {
           kwh_per_day: number | null
           kwh_per_month: number | null
           notes: string | null
+          photo_url: string | null
           quantity: number
           wattage_w: number
         }
@@ -116,6 +120,7 @@ export type Database = {
           kwh_per_day?: number | null
           kwh_per_month?: number | null
           notes?: string | null
+          photo_url?: string | null
           quantity?: number
           wattage_w: number
         }
@@ -131,6 +136,7 @@ export type Database = {
           kwh_per_day?: number | null
           kwh_per_month?: number | null
           notes?: string | null
+          photo_url?: string | null
           quantity?: number
           wattage_w?: number
         }

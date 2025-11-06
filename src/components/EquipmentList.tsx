@@ -6,6 +6,7 @@ import { Plus, Trash2, Edit } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import AddEquipmentDialog from "./AddEquipmentDialog";
 import AddAreaDialog from "./AddAreaDialog";
+import EditEquipmentDialog from "./EditEquipmentDialog";
 
 interface Area {
   id: string;
@@ -25,6 +26,7 @@ interface Equipment {
   notes?: string;
   kwh_per_day: number;
   kwh_per_month: number;
+  photo_url?: string;
 }
 
 interface EquipmentListProps {
@@ -39,6 +41,8 @@ const EquipmentList = ({ projectId, tariff }: EquipmentListProps) => {
   const [selectedAreaId, setSelectedAreaId] = useState<string | null>(null);
   const [showAddArea, setShowAddArea] = useState(false);
   const [showAddEquipment, setShowAddEquipment] = useState(false);
+  const [showEditEquipment, setShowEditEquipment] = useState(false);
+  const [editingEquipment, setEditingEquipment] = useState<Equipment | null>(null);
 
   useEffect(() => {
     fetchAreas();
@@ -81,6 +85,11 @@ const EquipmentList = ({ projectId, tariff }: EquipmentListProps) => {
     } catch (error) {
       console.error("Error fetching equipment:", error);
     }
+  };
+
+  const handleEdit = (item: Equipment) => {
+    setEditingEquipment(item);
+    setShowEditEquipment(true);
   };
 
   const deleteEquipment = async (equipmentId: string) => {
@@ -167,22 +176,38 @@ const EquipmentList = ({ projectId, tariff }: EquipmentListProps) => {
             <Card key={item.id}>
               <CardHeader>
                 <div className="flex items-start justify-between">
-                  <div>
+                  <div className="flex-1">
                     <CardTitle className="text-lg">{item.description}</CardTitle>
                     <p className="text-sm text-muted-foreground mt-1">
                       {item.category} • {item.condition}
                     </p>
                   </div>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => deleteEquipment(item.id)}
-                  >
-                    <Trash2 className="w-4 h-4 text-destructive" />
-                  </Button>
+                  <div className="flex gap-2">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => handleEdit(item)}
+                    >
+                      <Edit className="w-4 h-4" />
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => deleteEquipment(item.id)}
+                    >
+                      <Trash2 className="w-4 h-4 text-destructive" />
+                    </Button>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent>
+                {item.photo_url && (
+                  <img 
+                    src={item.photo_url} 
+                    alt={item.description}
+                    className="w-full h-48 object-cover rounded-md mb-4"
+                  />
+                )}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                   <div>
                     <p className="text-muted-foreground">Quantity</p>
@@ -235,6 +260,18 @@ const EquipmentList = ({ projectId, tariff }: EquipmentListProps) => {
             fetchEquipment(selectedAreaId);
           }
           setShowAddEquipment(false);
+        }}
+      />
+
+      <EditEquipmentDialog
+        open={showEditEquipment}
+        onOpenChange={setShowEditEquipment}
+        equipment={editingEquipment}
+        onSuccess={() => {
+          if (selectedAreaId) {
+            fetchEquipment(selectedAreaId);
+          }
+          setShowEditEquipment(false);
         }}
       />
     </div>

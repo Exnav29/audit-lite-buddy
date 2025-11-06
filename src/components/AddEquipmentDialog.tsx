@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { Camera } from "lucide-react";
 
 const EQUIPMENT_CATEGORIES = [
   "Lighting",
@@ -31,6 +32,8 @@ interface AddEquipmentDialogProps {
 const AddEquipmentDialog = ({ open, onOpenChange, areaId, onSuccess }: AddEquipmentDialogProps) => {
   const { toast } = useToast();
   const [loading, setLoading] = useState(false);
+  const [photo, setPhoto] = useState<File | null>(null);
+  const [photoPreview, setPhotoPreview] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     category: "",
     description: "",
@@ -42,11 +45,41 @@ const AddEquipmentDialog = ({ open, onOpenChange, areaId, onSuccess }: AddEquipm
     notes: "",
   });
 
+  const handlePhotoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      setPhoto(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
 
     try {
+      let photoUrl = null;
+
+      if (photo) {
+        const fileExt = photo.name.split('.').pop();
+        const fileName = `${areaId}-${Date.now()}.${fileExt}`;
+        const { error: uploadError } = await supabase.storage
+          .from('equipment-photos')
+          .upload(fileName, photo);
+
+        if (uploadError) throw uploadError;
+        
+        const { data: { publicUrl } } = supabase.storage
+          .from('equipment-photos')
+          .getPublicUrl(fileName);
+        
+        photoUrl = publicUrl;
+      }
+
       const { error } = await supabase
         .from("equipment")
         .insert({
@@ -59,6 +92,7 @@ const AddEquipmentDialog = ({ open, onOpenChange, areaId, onSuccess }: AddEquipm
           days_per_week: parseInt(formData.days_per_week),
           condition: formData.condition,
           notes: formData.notes || null,
+          photo_url: photoUrl,
         });
 
       if (error) throw error;
@@ -78,6 +112,8 @@ const AddEquipmentDialog = ({ open, onOpenChange, areaId, onSuccess }: AddEquipm
         condition: "Working",
         notes: "",
       });
+      setPhoto(null);
+      setPhotoPreview(null);
       onSuccess();
     } catch (error) {
       console.error("Error adding equipment:", error);
@@ -157,6 +193,36 @@ const AddEquipmentDialog = ({ open, onOpenChange, areaId, onSuccess }: AddEquipm
                 }
                 required
               />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="equipment-photo">Equipment Photo (Optional)</Label>
+              <div className="flex gap-2">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => document.getElementById('equipment-photo')?.click()}
+                  className="flex-1"
+                >
+                  <Camera className="w-4 h-4 mr-2" />
+                  {photo ? 'Change Photo' : 'Take Photo'}
+                </Button>
+                <Input
+                  id="equipment-photo"
+                  type="file"
+                  accept="image/*"
+                  capture="environment"
+                  onChange={handlePhotoChange}
+                  className="hidden"
+                />
+              </div>
+              {photoPreview && (
+                <img 
+                  src={photoPreview} 
+                  alt="Preview" 
+                  className="mt-2 w-full h-48 object-cover rounded-md border"
+                />
+              )}
             </div>
 
             <div className="grid grid-cols-2 gap-4">
